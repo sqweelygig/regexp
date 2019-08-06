@@ -7,21 +7,25 @@ export interface Flags {
 }
 
 export class RegExp {
-	public static makeFlagsArray(flags: string): Flags {
+	public static parseFlagsArray(flags: string): Flags {
+		// TODO This should check that the string is in the format /[sgimu]*/
 		return {
 			dotAll: flags.includes("s"),
 			global: flags.includes("g"),
 			ignoreCase: flags.includes("i"),
 			multiline: flags.includes("m"),
-			unicode: flags.includes("u")
-		}
+			unicode: flags.includes("u"),
+		};
 	}
 
 	public readonly flags: Flags;
+	public readonly pattern: string;
 
-	public constructor(private readonly source: string) {
-		const flagString = source.split("/").pop();
-		this.flags = RegExp.makeFlagsArray(flagString);
+	public constructor(private readonly regExp: string) {
+		// TODO This should check that the string is in the format /\/.*\/[a-z]*/
+		const flagIndex = regExp.lastIndexOf("/");
+		const flagString = regExp.substr(flagIndex);
+		this.flags = RegExp.parseFlagsArray(flagString);
+		this.pattern = regExp.substr(1, flagIndex - 1);
 	}
 }
-
