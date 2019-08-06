@@ -1,0 +1,28 @@
+{
+  "name": "regexp",
+  "version": "1.0.0",
+  "description": "Custom regular expression evaluator",
+  "main": "regexp.ts",
+  "scripts": {
+    "test": "mocha -r ts-node/register src/*.spec.ts"
+  },
+  "keywords": [],
+  "author": "Andrew Lucas (github.com/sqweelygig)",
+  "engines": {
+    "node": "^12.5.0"
+  },
+  "dependencies": {
+    "typescript": "^3.5.3",
+    "ts-node": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.6.9",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "prettier": "^1.18.2",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0"
+  }
+}
