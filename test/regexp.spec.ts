@@ -39,40 +39,4 @@ describe("RegExp", () => {
 			});
 		});
 	});
-	describe("matchString", () => {
-		it("should locate a character within a string.", () => {
-			const matcher = RegExp.matchString("a");
-			expect(matcher("b")).to.deep.equal([]);
-			expect(matcher("a")).to.deep.equal([
-				{
-					end: 1,
-					start: 0,
-				},
-			]);
-		});
-		it("should locate a character repeated in a string.", () => {
-			const matcher = RegExp.matchString("a");
-			expect(matcher("bjorn")).to.deep.equal([]);
-			expect(matcher("abba")).to.deep.equal([
-				{
-					end: 1,
-					start: 0,
-				},
-				{
-					end: 4,
-					start: 3,
-				},
-			]);
-		});
-		it("should locate a string within a string.", () => {
-			const matcher = RegExp.matchString("ab");
-			expect(matcher("bar")).to.deep.equal([]);
-			expect(matcher("abba")).to.deep.equal([
-				{
-					end: 2,
-					start: 0,
-				},
-			]);
-		});
-	});
 });

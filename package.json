@@ -4,7 +4,11 @@
   "description": "Custom regular expression evaluator",
   "main": "regexp.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register src/*.spec.ts"
+    "check": "npm run lint && npm run test",
+    "lint": "npm run lint_prettier && npm run lint_tslint",
+    "lint_prettier": "./node_modules/prettier/bin-prettier.js {test,src}/*.ts --check --write",
+    "lint_tslint": "./node_modules/tslint/bin/tslint {test,src}/*.ts --fix --force",
+    "test": "mocha -r ts-node/register test/*.spec.ts"
   },
   "keywords": [],
   "author": "Andrew Lucas (github.com/sqweelygig)",
