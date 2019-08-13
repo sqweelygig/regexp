@@ -1,9 +1,9 @@
 import { MatchGroup } from "./regexp";
 
 export class MatchInvert implements MatchGroup {
-	constructor(private readonly matcher: MatchGroup) {}
+	constructor(private readonly matchGroup: MatchGroup) {}
 
 	public test(needle: string): boolean {
-		return !this.matcher.test(needle);
+		return !this.matchGroup.test(needle);
 	}
 }
