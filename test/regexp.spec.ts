@@ -40,42 +40,42 @@ describe("RegExp", () => {
 		});
 	});
 	describe("parseGroup", () => {
-		it("should parse an example character", () => {
+		it("should parse an example character.", () => {
 			const result = RegExp.parseGroup("a");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(false);
 			expect(result.test("c")).to.equal(false);
 			expect(result.test("d")).to.equal(false);
 		});
-		it("should parse a group of two characters", () => {
+		it("should parse a group of two characters.", () => {
 			const result = RegExp.parseGroup("ab");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(true);
 			expect(result.test("c")).to.equal(false);
 			expect(result.test("d")).to.equal(false);
 		});
-		it("should parse an inverted group", () => {
+		it("should parse an inverted group.", () => {
 			const result = RegExp.parseGroup("^ab");
 			expect(result.test("a")).to.equal(false);
 			expect(result.test("b")).to.equal(false);
 			expect(result.test("c")).to.equal(true);
 			expect(result.test("d")).to.equal(true);
 		});
-		it("should parse a range", () => {
+		it("should parse a range.", () => {
 			const result = RegExp.parseGroup("a-c");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(true);
 			expect(result.test("c")).to.equal(true);
 			expect(result.test("d")).to.equal(false);
 		});
-		it("should parse an inverted range", () => {
+		it("should parse an inverted range.", () => {
 			const result = RegExp.parseGroup("^a-c");
 			expect(result.test("a")).to.equal(false);
 			expect(result.test("b")).to.equal(false);
 			expect(result.test("c")).to.equal(false);
 			expect(result.test("d")).to.equal(true);
 		});
-		it("should parse a group of two ranges", () => {
+		it("should parse a group of two ranges.", () => {
 			const result = RegExp.parseGroup("a-cA-C");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(true);
@@ -85,6 +85,72 @@ describe("RegExp", () => {
 			expect(result.test("B")).to.equal(true);
 			expect(result.test("C")).to.equal(true);
 			expect(result.test("D")).to.equal(false);
+		});
+	});
+	describe("parsePattern", () => {
+		it("should parse a single character.", () => {
+			const result = RegExp.parsePattern("a");
+			expect(result.length).to.equal(1);
+			expect(result[0].test("a")).to.equal(true);
+			expect(result[0].test("b")).to.equal(false);
+			expect(result[0].test("c")).to.equal(false);
+			expect(result[0].test("d")).to.equal(false);
+		});
+		it("should parse two simple characters.", () => {
+			const result = RegExp.parsePattern("ab");
+			expect(result.length).to.equal(2);
+			expect(result[0].test("a")).to.equal(true);
+			expect(result[0].test("b")).to.equal(false);
+			expect(result[0].test("c")).to.equal(false);
+			expect(result[0].test("d")).to.equal(false);
+			expect(result[1].test("a")).to.equal(false);
+			expect(result[1].test("b")).to.equal(true);
+			expect(result[1].test("c")).to.equal(false);
+			expect(result[1].test("d")).to.equal(false);
+		});
+		it("should parse a simple set.", () => {
+			const result = RegExp.parsePattern("[ab]");
+			expect(result.length).to.equal(1);
+			expect(result[0].test("a")).to.equal(true);
+			expect(result[0].test("b")).to.equal(true);
+			expect(result[0].test("c")).to.equal(false);
+			expect(result[0].test("d")).to.equal(false);
+		});
+		it("should parse two simple sets.", () => {
+			const result = RegExp.parsePattern("[ab][bc]");
+			expect(result.length).to.equal(2);
+			expect(result[0].test("a")).to.equal(true);
+			expect(result[0].test("b")).to.equal(true);
+			expect(result[0].test("c")).to.equal(false);
+			expect(result[0].test("d")).to.equal(false);
+			expect(result[1].test("a")).to.equal(false);
+			expect(result[1].test("b")).to.equal(true);
+			expect(result[1].test("c")).to.equal(true);
+			expect(result[1].test("d")).to.equal(false);
+		});
+		it("should parse a set then a character.", () => {
+			const result = RegExp.parsePattern("[ab]c");
+			expect(result.length).to.equal(2);
+			expect(result[0].test("a")).to.equal(true);
+			expect(result[0].test("b")).to.equal(true);
+			expect(result[0].test("c")).to.equal(false);
+			expect(result[0].test("d")).to.equal(false);
+			expect(result[1].test("a")).to.equal(false);
+			expect(result[1].test("b")).to.equal(false);
+			expect(result[1].test("c")).to.equal(true);
+			expect(result[1].test("d")).to.equal(false);
+		});
+		it("should parse a character then a set.", () => {
+			const result = RegExp.parsePattern("a[bc]");
+			expect(result.length).to.equal(2);
+			expect(result[0].test("a")).to.equal(true);
+			expect(result[0].test("b")).to.equal(false);
+			expect(result[0].test("c")).to.equal(false);
+			expect(result[0].test("d")).to.equal(false);
+			expect(result[1].test("a")).to.equal(false);
+			expect(result[1].test("b")).to.equal(true);
+			expect(result[1].test("c")).to.equal(true);
+			expect(result[1].test("d")).to.equal(false);
 		});
 	});
 });

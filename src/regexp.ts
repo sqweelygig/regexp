@@ -17,6 +17,7 @@ export interface MatchGroup {
 
 /**
  * A class for the matching of a string against a Regular Expression.
+ * It currently supports:
  * The features I aspire to implement are:
  * * `Common Tokens` from regex101.com for the pattern.
  *   [abc], [^abc], [a-z], [^a-z], [a-zA-Z],
@@ -56,6 +57,26 @@ export class RegExp {
 			const matchTail = RegExp.parseGroup(group.substring(1));
 			return new MatchEither(matchHead, matchTail);
 		}
+	}
+
+	public static parsePattern(pattern: string): MatchGroup[] {
+		let groupMode = false;
+		let groupAccumulator = "";
+		const returnValue = [];
+		pattern.split("").forEach((character) => {
+			if (!groupMode && character === "[") {
+				groupAccumulator = "";
+				groupMode = true;
+			} else if (groupMode && character === "]") {
+				groupMode = false;
+				returnValue.push(RegExp.parseGroup(groupAccumulator));
+			} else if (groupMode) {
+				groupAccumulator += character;
+			} else {
+				returnValue.push(RegExp.parseGroup(character));
+			}
+		});
+		return returnValue;
 	}
 
 	public readonly flags: Flags;
