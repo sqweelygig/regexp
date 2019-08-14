@@ -39,11 +39,10 @@ export class RegExp {
 	}
 
 	public static parseGroup(group: string): MatchGroup {
-		if (group.length === 1) {
+		if (group.length === 0) {
+			return new MatchCharacter("\0");
+		} else if (group.length === 1) {
 			return new MatchCharacter(group);
-		} else if (group.charAt(0) === "^") {
-			const matcher = RegExp.parseGroup(group.substring(1));
-			return new MatchInvert(matcher);
 		} else if (group.charAt(1) === "-" && group.length > 2) {
 			const matchHead = new MatchRange(group.charAt(0), group.charAt(2));
 			if (group.length === 3) {
@@ -69,7 +68,12 @@ export class RegExp {
 				groupMode = true;
 			} else if (groupMode && character === "]") {
 				groupMode = false;
-				returnValue.push(RegExp.parseGroup(groupAccumulator));
+				if (groupAccumulator.charAt(0) === "^") {
+					const baseMatch = RegExp.parseGroup(groupAccumulator.substring(1));
+					returnValue.push(new MatchInvert(baseMatch));
+				} else {
+					returnValue.push(RegExp.parseGroup(groupAccumulator));
+				}
 			} else if (groupMode) {
 				groupAccumulator += character;
 			} else {
