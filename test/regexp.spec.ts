@@ -153,4 +153,22 @@ describe("RegExp", () => {
 			expect(result[1].test("d")).to.equal(false);
 		});
 	});
+	describe("test (static)", () => {
+		it("should find a simple pattern in a string.", () => {
+			const needle = RegExp.parsePattern("ab");
+			expect(RegExp.test(needle, "abba")).to.equal(true);
+			expect(RegExp.test(needle, "kebab")).to.equal(true);
+			expect(RegExp.test(needle, "bjorn")).to.equal(false);
+			expect(RegExp.test(needle, "agnetha")).to.equal(false);
+		});
+	});
+	describe("test (stateful)", () => {
+		it("should find a simple pattern in a string.", () => {
+			const regExp = new RegExp("/ab/");
+			expect(regExp.test("abba")).to.equal(true);
+			expect(regExp.test("kebab")).to.equal(true);
+			expect(regExp.test("bjorn")).to.equal(false);
+			expect(regExp.test("agnetha")).to.equal(false);
+		});
+	});
 });

@@ -79,14 +79,30 @@ export class RegExp {
 		return returnValue;
 	}
 
-	public readonly flags: Flags;
-	public readonly pattern: string;
+	public static test(needle: MatchGroup[], haystack: string): boolean {
+		return haystack.split("").some((character, start) => {
+			return needle.every((matchGroup, offset) => {
+				return (
+					haystack.length > start + offset &&
+					matchGroup.test(haystack.charAt(start + offset))
+				);
+			});
+		});
+	}
 
-	public constructor(private readonly regExp: string) {
+	private readonly flags: Flags;
+	private readonly matchGroups: MatchGroup[];
+
+	public constructor(regExp: string) {
 		// TODO This should check that the string is in the format /\/.*\/[a-z]*/
 		const flagIndex = regExp.lastIndexOf("/");
 		const flagString = regExp.substr(flagIndex);
+		const pattern = regExp.substr(1, flagIndex - 1);
 		this.flags = RegExp.parseFlags(flagString);
-		this.pattern = regExp.substr(1, flagIndex - 1);
+		this.matchGroups = RegExp.parsePattern(pattern);
+	}
+
+	public test(haystack: string): boolean {
+		return RegExp.test(this.matchGroups, haystack);
 	}
 }
