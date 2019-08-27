@@ -17,10 +17,12 @@ export interface MatchGroup {
 
 /**
  * A class for the matching of a string against a Regular Expression.
+ * NodeJS v12.x native is the reference implementation.
  * It currently supports:
- * The features I aspire to implement are:
+ * * Simple characters; `a`, `ab`
+ * * Simple sets; `[ab]`, `[a-c]`, `[^a-c]`, `[a-cA-C]`
+ * The features I aspire towards are:
  * * `Common Tokens` from regex101.com for the pattern.
- *   [abc], [^abc], [a-z], [^a-z], [a-zA-Z],
  *   \s, \S, \d, \D, \w, \W, \b, \B, .,
  *   a?, a*, a+, a{3}, a{3,}, a{3,6},
  *   (...), (a|b), ^, $
@@ -83,7 +85,7 @@ export class RegExp {
 		return returnValue;
 	}
 
-	public static test(needle: MatchGroup[], haystack: string): boolean {
+	public static testMatch(haystack: string, needle: MatchGroup[]): boolean {
 		return haystack.split("").some((character, start) => {
 			return needle.every((matchGroup, offset) => {
 				return (
@@ -107,6 +109,6 @@ export class RegExp {
 	}
 
 	public test(haystack: string): boolean {
-		return RegExp.test(this.matchGroups, haystack);
+		return RegExp.testMatch(haystack, this.matchGroups);
 	}
 }

@@ -4,8 +4,8 @@ import { MatchCharacter } from "../src/match-character";
 import { MatchEither } from "../src/match-either";
 
 describe("MatchEither", () => {
-	describe("match", () => {
-		it("should match one of a character set.", () => {
+	describe("public test(needle: string)", () => {
+		it("should correctly match one of a character set.", () => {
 			const matchA = new MatchCharacter("a");
 			const matchB = new MatchCharacter("b");
 			const matchEither = new MatchEither(matchA, matchB);

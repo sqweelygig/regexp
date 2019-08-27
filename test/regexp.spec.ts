@@ -2,13 +2,9 @@ import { expect } from "chai";
 import "mocha";
 import { RegExp as MyRegExp } from "../src/regexp";
 
-/**
- * Tests for the RegExp class.
- * The regexp flavour is as per NodeJS v12.x native implementation.
- */
 describe("RegExp", () => {
-	describe("parseFlags", () => {
-		it("should parse an empty flags object.", () => {
+	describe("public static parseFlags(flags: string)", () => {
+		it("should parse an empty string into an empty flags object.", () => {
 			const result = MyRegExp.parseFlags("");
 			expect(result).to.deep.equal({
 				dotAll: false,
@@ -18,7 +14,7 @@ describe("RegExp", () => {
 				unicode: false,
 			});
 		});
-		it("should parse a full flags object.", () => {
+		it("should parse `igmsu` into a full flags object.", () => {
 			const result = MyRegExp.parseFlags("igmsu");
 			expect(result).to.deep.equal({
 				dotAll: true,
@@ -28,7 +24,7 @@ describe("RegExp", () => {
 				unicode: true,
 			});
 		});
-		it("should parse an example part set of flags.", () => {
+		it("should parse `igm` into a partial set of flags.", () => {
 			const result = MyRegExp.parseFlags("igm");
 			expect(result).to.deep.equal({
 				dotAll: false,
@@ -39,29 +35,29 @@ describe("RegExp", () => {
 			});
 		});
 	});
-	describe("parseGroup", () => {
-		it("should parse an example character.", () => {
+	describe("public static parseGroup(group: string)", () => {
+		it("should parse a character into a group that matches just that character.", () => {
 			const result = MyRegExp.parseGroup("a");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(false);
 			expect(result.test("c")).to.equal(false);
 			expect(result.test("d")).to.equal(false);
 		});
-		it("should parse a group of two characters.", () => {
+		it("should parse two characters into a group that matches either character.", () => {
 			const result = MyRegExp.parseGroup("ab");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(true);
 			expect(result.test("c")).to.equal(false);
 			expect(result.test("d")).to.equal(false);
 		});
-		it("should parse a range.", () => {
+		it("should parse a range into a group that matches the range.", () => {
 			const result = MyRegExp.parseGroup("a-c");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(true);
 			expect(result.test("c")).to.equal(true);
 			expect(result.test("d")).to.equal(false);
 		});
-		it("should parse a group of two ranges.", () => {
+		it("should parse two ranges into a group that matches either range.", () => {
 			const result = MyRegExp.parseGroup("a-cA-C");
 			expect(result.test("a")).to.equal(true);
 			expect(result.test("b")).to.equal(true);
@@ -73,8 +69,8 @@ describe("RegExp", () => {
 			expect(result.test("D")).to.equal(false);
 		});
 	});
-	describe("parsePattern", () => {
-		it("should parse a single character.", () => {
+	describe("public static parsePattern(pattern: string)", () => {
+		it("should parse a character into an array with one group that matches the character.", () => {
 			const result = MyRegExp.parsePattern("a");
 			expect(result.length).to.equal(1);
 			expect(result[0].test("a")).to.equal(true);
@@ -82,7 +78,7 @@ describe("RegExp", () => {
 			expect(result[0].test("c")).to.equal(false);
 			expect(result[0].test("d")).to.equal(false);
 		});
-		it("should parse two simple characters.", () => {
+		it("should parse two characters into an array with two groups each matching their character.", () => {
 			const result = MyRegExp.parsePattern("ab");
 			expect(result.length).to.equal(2);
 			expect(result[0].test("a")).to.equal(true);
@@ -94,7 +90,7 @@ describe("RegExp", () => {
 			expect(result[1].test("c")).to.equal(false);
 			expect(result[1].test("d")).to.equal(false);
 		});
-		it("should parse a simple set.", () => {
+		it("should parse a set into an array with one group that matches the characters.", () => {
 			const result = MyRegExp.parsePattern("[ab]");
 			expect(result.length).to.equal(1);
 			expect(result[0].test("a")).to.equal(true);
@@ -102,7 +98,15 @@ describe("RegExp", () => {
 			expect(result[0].test("c")).to.equal(false);
 			expect(result[0].test("d")).to.equal(false);
 		});
-		it("should parse a single character set.", () => {
+		it("should parse an inverted set into an array with one group that matches other characters.", () => {
+			const result = MyRegExp.parsePattern("[^ab]");
+			expect(result.length).to.equal(1);
+			expect(result[0].test("a")).to.equal(false);
+			expect(result[0].test("b")).to.equal(false);
+			expect(result[0].test("c")).to.equal(true);
+			expect(result[0].test("d")).to.equal(true);
+		});
+		it("should parse a single character set into an array with one group that matches the character.", () => {
 			const result = MyRegExp.parsePattern("[a]");
 			expect(result.length).to.equal(1);
 			expect(result[0].test("a")).to.equal(true);
@@ -110,7 +114,7 @@ describe("RegExp", () => {
 			expect(result[0].test("c")).to.equal(false);
 			expect(result[0].test("d")).to.equal(false);
 		});
-		it("should parse two simple sets.", () => {
+		it("should parse two sets into an array with two groups each matching their characters.", () => {
 			const result = MyRegExp.parsePattern("[ab][bc]");
 			expect(result.length).to.equal(2);
 			expect(result[0].test("a")).to.equal(true);
@@ -122,7 +126,7 @@ describe("RegExp", () => {
 			expect(result[1].test("c")).to.equal(true);
 			expect(result[1].test("d")).to.equal(false);
 		});
-		it("should parse a set then a character.", () => {
+		it("should parse a set then a character into an array with two groups each matching their character(s).", () => {
 			const result = MyRegExp.parsePattern("[ab]c");
 			expect(result.length).to.equal(2);
 			expect(result[0].test("a")).to.equal(true);
@@ -134,7 +138,7 @@ describe("RegExp", () => {
 			expect(result[1].test("c")).to.equal(true);
 			expect(result[1].test("d")).to.equal(false);
 		});
-		it("should parse a character then a set.", () => {
+		it("should parse a character then a set into an array with two groups each matching their character(s).", () => {
 			const result = MyRegExp.parsePattern("a[bc]");
 			expect(result.length).to.equal(2);
 			expect(result[0].test("a")).to.equal(true);
@@ -147,16 +151,23 @@ describe("RegExp", () => {
 			expect(result[1].test("d")).to.equal(false);
 		});
 	});
-	describe("test (static)", () => {
-		it("should find a simple pattern in a string.", () => {
-			const needle = MyRegExp.parsePattern("ab");
-			expect(MyRegExp.test(needle, "abba")).to.equal(true);
-			expect(MyRegExp.test(needle, "kebab")).to.equal(true);
-			expect(MyRegExp.test(needle, "bjorn")).to.equal(false);
-			expect(MyRegExp.test(needle, "agnetha")).to.equal(false);
+	describe("public static testMatch(needle: MatchGroup[], haystack: string)", () => {
+		const needles = ["a", "ab", "[ab]", "[]]", "[a-c]", "[^a-c]", "[a-cA-C]"];
+		const haystacks = ["abba", "bc", "kebab", "bjorn", "agnetha"];
+		needles.forEach((needle) => {
+			haystacks.forEach((haystack) => {
+				const regExp = new RegExp(needle);
+				const expectation = regExp.test(haystack);
+				const matches = expectation ? "matches" : "does not match";
+				it(`should find that ${haystack} ${matches} ${needle}.`, () => {
+					const pattern = MyRegExp.parsePattern(needle);
+					const result = MyRegExp.testMatch(haystack, pattern);
+					expect(result).to.equal(expectation);
+				});
+			});
 		});
 	});
-	describe("constructor (errors found during random tests)", () => {
+	describe("public constructor(regExp: string)", () => {
 		it("should construct using the regexp /[]]/", () => {
 			let myRegExp;
 			try {
@@ -168,81 +179,13 @@ describe("RegExp", () => {
 			expect(myRegExp).to.not.equal(undefined);
 		});
 	});
-	describe("test (stateful)", () => {
-		it("should find a simple pattern in a string.", () => {
+	describe("public test(haystack: string)", () => {
+		it("should find if strings match a simple pattern.", () => {
 			const myRegExp = new MyRegExp("/ab/");
 			expect(myRegExp.test("abba")).to.equal(true);
 			expect(myRegExp.test("kebab")).to.equal(true);
 			expect(myRegExp.test("bjorn")).to.equal(false);
 			expect(myRegExp.test("agnetha")).to.equal(false);
 		});
-	});
-	describe("test (errors found during random tests)", () => {
-		const tests = [
-			{ needle: "[]", haystack: "abba" },
-			{ needle: "[^]", haystack: "abba" },
-			{ needle: "[^b^b]", haystack: "abba" },
-		];
-		tests.forEach((test) => {
-			const regExp = new RegExp(test.needle);
-			const expectation = regExp.test(test.haystack);
-			const match = expectation ? "a match" : "no match";
-			it(`should find ${match} for /${test.needle}/ in ${test.haystack}`, () => {
-				const myRegExp = new MyRegExp(`/${test.needle}/`);
-				expect(myRegExp.test(test.haystack)).to.equal(expectation);
-			});
-		});
-	});
-	describe("test (random input strings)", () => {
-		const haystackScope = "abc";
-		// TODO: Merge these once I have support for ^ meaning beginning of string
-		const startPatternScope = haystackScope + "[]-";
-		const midPatternScope = startPatternScope + "^";
-		const haystackChars = haystackScope.split("");
-		const startChars = startPatternScope.split("");
-		const midChars = midPatternScope.split("");
-		const approxTests = Math.pow(2, 12);
-		const maxLength = 16;
-		for (let i = 0; i < Math.ceil(Math.sqrt(approxTests)); i++) {
-			let regExp;
-			let pattern;
-			const patternLength = Math.ceil(Math.random() * maxLength);
-			while (regExp === undefined) {
-				const startIndex = Math.floor(Math.random() * startChars.length);
-				pattern = startChars[startIndex];
-				for (let j = 0; j < patternLength; j++) {
-					const midIndex = Math.floor(Math.random() * midChars.length);
-					pattern += midChars[midIndex];
-				}
-				try {
-					regExp = new RegExp(pattern, "");
-				} catch (error) {
-					/* Intentionally left blank, the loop tries a new pattern */
-				}
-			}
-			let myRegExp;
-			it(`should construct using /${pattern}/`, () => {
-				try {
-					myRegExp = new MyRegExp(`/${pattern}/`);
-				} catch (error) {
-					// tslint:disable-next-line:no-console
-					console.error(error);
-				}
-				expect(myRegExp).to.not.equal(undefined);
-			});
-			for (let k = 0; k < Math.floor(Math.sqrt(approxTests)); k++) {
-				let haystack = "";
-				const extraCharacters = Math.ceil(Math.random() * maxLength * 2);
-				const haystackLength = patternLength + extraCharacters;
-				for (let j = 0; j < haystackLength; j++) {
-					const index = Math.floor(Math.random() * haystackChars.length);
-					haystack += haystackChars[index];
-				}
-				const expectation = regExp.test(haystack);
-				it(`should return ${expectation} for /${pattern}/ in ${haystack}`, () => {
-					expect(myRegExp.test(haystack)).to.equal(expectation);
-				});
-			}
-		}
 	});
 });
